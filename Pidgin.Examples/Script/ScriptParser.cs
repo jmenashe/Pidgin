@@ -34,16 +34,31 @@ namespace Pidgin.Examples.Script
         ;
         public static readonly Parser<char, BinaryOperatorType> AssignOperator = BinOpParser.Where(x => x == BinaryOperatorType.Assign);
         public static Parser<char, Decl> DeclParser => StorageParser
-            .Bind(scope => ExprParser.Identifier.Select(ident => new Decl(scope, ident)))
+            .Then(ExprParser.Identifier, (scope, ident) => new Decl(scope, ident))
+            .Before(StatementEnd)
         ;
-        public static Parser<char, DeclAssign> DeclAssignParser => DeclParser
-            .Bind(scopedId => AssignOperator.Select(binOp => scopedId))
-            .Bind(scopedId => ExprParser.Expr.Select(expr => new DeclAssign(scopedId.Scope, scopedId.Identifier, expr)))
+        public static Parser<char, DeclAssign> DeclAssignParser => StorageParser
+            .Then(ExprParser.Identifier, (scope, ident) => (scope,ident))
+            .Before(AssignOperator)
+            .Then(ExprParser.Expr, (scopedId, value) => new DeclAssign(scopedId.scope, scopedId.ident, value))
+            .Before(StatementEnd)
         ;
 
         // TODO: Finish in implementation details.
         public static Parser<char, IStatement> StatementParser => DeclParser.Cast<IStatement>().Or(DeclAssignParser.Cast<IStatement>());
-        public static Parser<char, Block> BlockParser => StatementParser.Many().Select(x => new Block(x));
-        public static Parser<char, Module> ModuleParser => BlockParser.Many().Select(x => new Module(x));
+        public static Parser<char, Block> BlockParser => StatementParser.Many().Or(
+                StatementParser.Many().Then(StatementParser.Many().Braces()).Then(StatementParser.Many())
+            ).Select(x => new Block(x))
+        ;
+        public static Parser<char, IScript> ModuleParser => BlockParser.Many()
+            .Select(x => new Module(x))
+            .Cast<IScript>()
+        ;
+
+
+        public Result<char, IScript> Parse(string input)
+            => ModuleParser.Parse(input);
+        public IScript ParseOrThrow(string input)
+            => ModuleParser.ParseOrThrow(input);
     }
 }

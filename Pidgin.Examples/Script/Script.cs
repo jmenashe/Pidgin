@@ -33,14 +33,18 @@ namespace Pidgin.Examples.Script
     // TODO: Finish in implementation details.
     public class Block : IScript
     {
-        public Block(IEnumerable<IStatement> statements) { }
-    }
-    public class Sub : IScript
-    {
-        public Sub(IEnumerable<IStatement> statements) { }
+        public IEnumerable<IStatement> Statements { get; private set; }
+        public Block(IEnumerable<IStatement> statements)
+        {
+            this.Statements = statements;
+        }
     }
     public class Module : IScript
     {
-        public Module(IEnumerable<Block> blocks) { }
+        public IEnumerable<Block> Blocks { get; private set; }
+        public Module(IEnumerable<Block> blocks)
+        {
+            this.Blocks = blocks;
+        }
     }
 }

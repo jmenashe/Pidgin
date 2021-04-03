@@ -1,5 +1,6 @@
 ﻿using System;
 using Pidgin.Examples.Expression;
+using Pidgin.Examples.Script;
 
 
 namespace DevConsole
@@ -8,8 +9,9 @@ namespace DevConsole
     {
         static void Main(string[] args)
         {
-            var input = "12 * 3 + foo(-3, x)() * (2 + 1)";
-            var result = ExprParser.ParseOrThrow(input);
+            var parser = new ScriptParser();
+            var input = "local beeftaco = 12 * 3; global gorillasteve = 35 + 1004;";
+            var result = parser.ParseOrThrow(input);
             Console.WriteLine("result more like i shit my dang PANTS", result);
         }
     }

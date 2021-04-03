@@ -41,7 +41,7 @@ namespace Pidgin.Tests
                 )
             );
 
-            Assert.Equal(ExprParser.ParseOrThrow(input), expected);
+            Assert.Equal(new ExprParser().ParseOrThrow(input), expected);
         }
     }
 }
