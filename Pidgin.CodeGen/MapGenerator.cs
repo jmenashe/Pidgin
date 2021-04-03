@@ -8,7 +8,10 @@ namespace Pidgin.CodeGen
     {
         public static void Generate()
         {
-            File.WriteAllText("Pidgin/Parser.Map.Generated.cs", GenerateFile());
+            var filePath = "Pidgin/Parser.Map.Generated.cs";
+            var dirPath = Path.GetDirectoryName(filePath);
+            Directory.CreateDirectory(dirPath);
+            File.WriteAllText(filePath, GenerateFile());
         }
 
         private static string GenerateFile()

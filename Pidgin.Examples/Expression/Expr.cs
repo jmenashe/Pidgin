@@ -76,7 +76,8 @@ namespace Pidgin.Examples.Expression
     public enum BinaryOperatorType
     {
         Add,
-        Mul
+        Mul,
+        Assign
     }
     public class BinaryOp : IExpr
     {
